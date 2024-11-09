@@ -40,11 +40,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 // cors跨域配置(注意位置要在其他路由前面)
-app.use(cors({
-  origin:['http://localhost:3000','http://127.0.0.1:5500']
-}));
-
-
+app.use(cors());
 
 // 前台路由配置
 app.use('/index',indexRouter);
