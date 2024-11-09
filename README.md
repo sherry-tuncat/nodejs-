@@ -10,11 +10,12 @@
 将`.env.example`文件复制一份命名为`.env`，并修改配置。
 
 ```
-PORT = 3001
+NODE_DEV = development
+PORT = 3000
 SECRET = 你的密钥
 ```
 
-其中`PORT`配置为服务端口，`SECRET`配置为 jwt 加密密钥`
+其中`NODE_DEV`默认为开发环境，其中`PORT`配置为服务端口，`SECRET`配置为 jwt 加密密钥`
 
 ### 生成密钥
 

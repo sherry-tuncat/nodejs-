@@ -2,9 +2,13 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const cors = require('cors');
+// 引入全局变量
+require('dotenv').config();
+
+// 中间件
 const adminAuth = require('./middlewares/admin-auth');
 const userAuth = require('./middlewares/user-auth');
-const cors = require('cors');
 
 // 前台路由文件
 const indexRouter = require('./routes/index');
@@ -40,8 +44,7 @@ app.use(cors({
   origin:['http://localhost:3000','http://127.0.0.1:5500']
 }));
 
-// 引入全局变量
-require('dotenv').config();
+
 
 // 前台路由配置
 app.use('/index',userAuth, indexRouter);
