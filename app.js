@@ -47,7 +47,7 @@ app.use(cors({
 
 
 // 前台路由配置
-app.use('/index',userAuth, indexRouter);
+app.use('/index',indexRouter);
 app.use('/users',userAuth, usersRouter);
 app.use('/categories',userAuth,categoriesRouter);
 app.use('/courses',userAuth,coursesRouter);
