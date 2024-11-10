@@ -22,52 +22,41 @@ router.get('/', async function(req, res) {
     const offset = (currentPage-1) * pageSize;
     // 倒序排列，一般默认倒叙展示最新内容
     const condition = {
-      ...getInfo(),
       order:[['id','DESC']],
       offset,
       limit:pageSize,
+      where:{},
+      ...getInfo(),
     }
     // 模糊搜索
     if(query.categoryId) {
-      condition.where = {
-        categoryId:{
-          [Op.eq]:`${query.categoryId}`
-        }
+      condition.where.categoryId = {
+        [Op.eq]:`${query.categoryId}`
       }
     }
     if(query.userId) {
-      condition.where = {
-        userId:{
-          [Op.eq]:`${query.userId}`
-        }
+      condition.where.userId = {
+        [Op.eq]:`${query.userId}`
       }
     }
     if(query.name) {
-      condition.where = {
-        name:{
-          [Op.like]:`%${query.name}%`
-        }
+      condition.where.name = {
+        [Op.like]:`%${query.name}%`
       }
     }
     if(query.image) {
-      condition.where = {
-        image:{
-          [Op.like]:`%${query.image}%`
-        }
+      condition.where.image = {
+        [Op.like]:`%${query.image}%`
       }
     }
     if(query.recommended) {
-      condition.where = {
-        recommended:{
-          [Op.eq]:query.recommended === 'true'
-        }
+      condition.where.recommended = {
+        [Op.eq]:query.recommended === 'true'
       }
     }
     if(query.introductory) {
-      condition.where = {
-        introductory:{
-          [Op.eq]:query.introductory === 'true'
-        }
+      condition.where.introductory = {
+        [Op.eq]:query.introductory === 'true'
       }
     }
     const {count,rows} = await Course.findAndCountAll(condition);

@@ -49,8 +49,7 @@ function failure(error,res) {
       errors:[error.message]
     })
   }
-  res.status(error.status || 500);
-  res.json({
+  res.status(error.status || 500).json({
     code:1,
     success:false,
     errors: [error.message] || error

@@ -25,13 +25,12 @@ router.get('/', async function(req, res) {
       order:[['id','DESC']],
       offset,
       limit:pageSize,
+      where:{}
     }
     // 模糊搜索
     if(query.title) {
-      condition.where = {
-        title:{
-          [Op.like]:`%${query.title}%`
-        }
+      condition.where.title ={
+        [Op.like]:`%${query.title}%`
       }
     }
     const {count,rows} = await Article.findAndCountAll(condition);

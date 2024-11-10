@@ -9,6 +9,23 @@ const {
 const { NotFoundError,UnauthorizedError } = require('../../utils/errors')
 
 /**
+ * 获取当前用户信息
+ * GET /admin/users/me
+ */
+router.get('/me',async function(req,res){
+  try {
+    const user = req.user;
+    if(!user) {
+      throw new Error('获取当前用户信息失败')
+    }
+    delete user.dataValues.password; // 删除密码
+    success(res,'获取当前用户信息成功',user);
+  } catch(error) {
+    failure(error,res)
+  }
+})
+
+/**
  * 查询用户列表
  * GET /admin/users
  * */
@@ -25,55 +42,45 @@ router.get('/', async function(req, res) {
       order:[['id','DESC']],
       offset,
       limit:pageSize,
+      attributes:{
+        exclude:['password']
+      },
+      where:{}
     }
     // 模糊搜索
     if(query.email) {
-      condition.where = {
-        email:{
-          [Op.eq]:`${query.email}`
-        }
+      condition.where.email = {
+        [Op.eq]:`${query.email}`
       }
     }
     if(query.username) {
-      condition.where = {
-        username:{
-          [Op.eq]:`${query.username}`
-        }
+      condition.where.username = {
+        [Op.eq]:`${query.username}`
       }
     }
     if(query.nickname) {
-      condition.where = {
-        username:{
-          [Op.like]:`%${query.nickname}%`
-        }
+      condition.where.username = {
+        [Op.like]:`%${query.nickname}%`
       }
     }
     if(query.sex) {
-      condition.where = {
-        sex:{
-          [Op.eq]:`${query.sex}`
-        }
+      condition.where.sex = {
+        [Op.eq]:`${query.sex}`
       }
     }
     if(query.company) {
-      condition.where = {
-        company:{
-          [Op.like]:`%${query.company}%`
-        }
+      condition.where.company = {
+        [Op.like]:`%${query.company}%`
       }
     }
     if(query.introduce) {
-      condition.where = {
-        introduce:{
-          [Op.like]:`%${query.introduce}%`
-        }
+      condition.where.introduce = {
+        [Op.like]:`%${query.introduce}%`
       }
     }
     if(query.role) {
-      condition.where = {
-        role:{
-          [Op.eq]:`%${query.role}%`
-        }
+      condition.where.role = {
+        [Op.eq]:`%${query.role}%`
       }
     }
     const {count,rows} = await User.findAndCountAll(condition);
@@ -107,7 +114,7 @@ router.get('/:id',async function(req,res) {
 
 /**
  * 创建用户
- * POST /api/users
+ * POST /admin/users
  */
 router.post('/',async function(req,res){
   try {
@@ -117,9 +124,10 @@ router.post('/',async function(req,res){
     // 白名单过滤
     const body = filterBody(req);
     // 插入数据
-    const article = await User.create(body)
+    const user = await User.create(body)
     // 201状态码表示成功并且创建了新资源
-    success(res,'创建用户成功',article,201);
+    delete user.dataValues.password; // 删除密码
+    success(res,'创建用户成功',user,201);
   } catch(error) {
     failure(error,res)
   }
@@ -127,7 +135,7 @@ router.post('/',async function(req,res){
 
 /**
  * 更新用户
- * PUT /api/users/:id
+ * PUT /admin/users/:id
  */
 router.put('/:id',async function(req,res){
   try {
@@ -144,6 +152,8 @@ router.put('/:id',async function(req,res){
     failure(error,res)
   }
 })
+
+
 
 /**
  * 公共方法：白名单过滤
@@ -174,6 +184,7 @@ async function getUser(req) {
   if(!user) {
     throw new NotFoundError(`ID:${id}的用户未找到`)
   }
+  delete user.dataValues.password; // 删除密码
   return user
 }
 

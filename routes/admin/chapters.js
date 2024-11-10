@@ -29,42 +29,33 @@ router.get('/', async function(req, res) {
       order:[['rank','ASC'],['id','ASC']],
       offset,
       limit:pageSize,
+      where:{},
       ...getCourse()
     }
     // 模糊搜索
     if(query.courseId) {
-      condition.where = {
-        courseId:{
-          [Op.eq]:`${query.courseId}`
-        }
+      condition.where.courseId = {
+        [Op.eq]:`${query.courseId}`
       }
     }
     if(query.title) {
-      condition.where = {
-        title:{
-          [Op.like]:`%${query.title}%`
-        }
+      condition.where.title = {
+        [Op.like]:`%${query.title}%`
       }
     }
     if(query.content) {
-      condition.where = {
-        content:{
-          [Op.like]:`%${query.content}%`
-        }
+      condition.where.content = {
+        [Op.like]:`%${query.content}%`
       }
     }
     if(query.video) {
-      condition.where = {
-        video:{
-          [Op.like]:`%${query.video}%`
-        }
+      condition.where.video = {
+        [Op.like]:`%${query.video}%`
       }
     }
     if(query.rank) {
-      condition.where = {
-        rank:{
-          [Op.eq]:`${query.rank}`
-        }
+      condition.where.rank = {
+        [Op.eq]:`${query.rank}`
       }
     }
     const {count,rows} = await Chapter.findAndCountAll(condition);

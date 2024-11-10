@@ -56,7 +56,7 @@ router.post('/sign_in',async function(req,res){
     }
     const condition = {
       where:{
-          [Op.or]:[
+        [Op.or]:[
           {email:login},
           {username:login}
         ]
