@@ -30,9 +30,13 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    context: DataTypes.TEXT
+    context: DataTypes.TEXT,
+    deletedAt:{
+      type:DataTypes.DATE,
+    }
   }, {
     sequelize,
+    paranoid:true, // 软删除
     modelName: 'Article',
   });
   return Article;

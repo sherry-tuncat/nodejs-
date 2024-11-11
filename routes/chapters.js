@@ -17,20 +17,6 @@ router.get('/:id', async function(req, res) {
     if(!id){
       throw new Error('id不能为空')
     }
-    // const condition = {
-    //   attributes:{exclude:['CourseId']},
-    //   include:[
-    //     {
-    //       attributes:{exclude:['UserId','CategoryId']},
-    //       model:Course,
-    //       as:'course',
-    //       include:{
-    //         model: User,
-    //         as:'user',
-    //       },
-    //     }
-    //   ]
-    // };
     const chapter = await Chapter.findByPk(id,{
       attributes:{exclude:['CourseId']}
     });
@@ -40,12 +26,14 @@ router.get('/:id', async function(req, res) {
     const course = await chapter.getCourse({
       attributes:{exclude:['UserId','CategoryId']}
     })
-    const user = await course.getUser();
-    const chapters = await Chapter.findAll({
-      where:{
-        courseId:chapter.courseId
-      }
-    })
+    const [user,chapters] = Promise.all([
+      course.getUser(),
+      Chapter.findAll({
+        where:{
+          courseId:chapter.courseId
+        }
+      })
+    ])
     const data = {
       chapter,
       course,

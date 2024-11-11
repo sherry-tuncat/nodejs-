@@ -16,6 +16,9 @@ module.exports = (sequelize, DataTypes) => {
         as:'courses'
       });
       models.User.belongsToMany(models.Course,{through:models.Like,foreignKey:'userId',as:'likeCourses'}); // user通过like与course建立联系，as指定别名
+      models.User.hasMany(models.Attachment, {
+        as:'attachments'
+      });
     }
   }
   User.init({

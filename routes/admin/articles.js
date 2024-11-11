@@ -27,6 +27,13 @@ router.get('/', async function(req, res) {
       limit:pageSize,
       where:{}
     }
+    // 是否查询软删除数据(这里只选择软删除的数据)
+    if(query.deleted==='true') {
+      condition.paranoid = false;
+      condition.where.deletedAt = {
+        [Op.not]:null
+      }
+    }
     // 模糊搜索
     if(query.title) {
       condition.where.title ={
@@ -49,14 +56,19 @@ router.get('/', async function(req, res) {
 });
 
 /**
- * 查询文章详情
- * GET /admin/articles/:id
+ * 查询一个或多个文章详情
+ * POST /admin/articles/getArticles
  * */
-router.get('/:id',async function(req,res) {
+router.post('/getArticles',async function(req,res) {
   try {
     // 根据id查询文章
-    const article = await getArticle(req);
-    success(res,'查询成功',article);
+    const articles = await Article.findAll({
+      where:{
+        id:req.body.id
+      }
+    });
+    success(res,'查询成功',articles);
+    success(res,'查询成功');
   } catch(error) {
     failure(error,res)
   }
@@ -64,7 +76,7 @@ router.get('/:id',async function(req,res) {
 
 /**
  * 创建文章
- * POST /api/articles
+ * POST /admin/articles
  */
 router.post('/',async function(req,res){
   try {
@@ -89,6 +101,39 @@ router.delete('/:id',async function(req,res){
     const article = await getArticle(req)
     await article.destroy()
     success(res,'删除文章成功',article);
+  } catch(error) {
+    failure(error,res)
+  }
+})
+
+/**
+ * 恢复文章
+ * POST /admin/articles/restore
+ */
+router.post('/restore',async function(req,res){
+  try {
+    const {id} = req.body;
+    await Article.restore({
+      where:{id}
+    })
+    success(res,'恢复成功')
+  } catch(error) {
+    failure(error,res)
+  }
+})
+
+/**
+ * 彻底删除文章
+ * POST /admin/articles/destroy
+ */
+router.post('/destroy',async function(req,res){
+  try {
+    const {id} = req.body;
+    await Article.destroy({
+      where:{id},
+      force:true
+    })
+    success(res,'彻底删除成功')
   } catch(error) {
     failure(error,res)
   }

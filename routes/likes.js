@@ -19,21 +19,23 @@ router.post('/', async function(req, res) {
       throw new Error('courseId不能为空')
     };
     // 确认课程存在
-    const course = await Course.findOne({
-      where:{
-        id:courseId
-      }
-    });
+    // 检查课程之前是否已点赞
+    const [course,like] = Promise.all([
+      Course.findOne({
+        where:{
+          id:courseId
+        }
+      }),
+      Like.findOne({
+        where:{
+          userId,
+          courseId
+        }
+      })
+    ])
     if(!course) {
       throw new Error('课程不存在')
     }
-    // 检查课程之前是否已点赞
-    const like = await Like.findOne({
-      where:{
-        userId,
-        courseId
-      }
-    })
     // 存在则取消赞
     if(like) {
       await like.destroy();
@@ -65,17 +67,19 @@ router.get('/courses', async function(req, res) {
     // 查询当前用户
     const user = await User.findByPk(userId);
     // 获取当前用户多对多关联的课程
-    const courses = await user.getLikeCourses({
-      joinTableAttributes:[], // 将关联表字段去掉
-      attributes:{
-        exclude:['CategoryId','UserId','content']
-      },
-      order:[['id','DESC']],
-      offset,
-      limit:pageSize
-    })
     // 计算总数
-    const count = await user.countLikeCourses();
+    const [courses,count] = Promise.all([
+      user.getLikeCourses({
+        joinTableAttributes:[], // 将关联表字段去掉
+        attributes:{
+          exclude:['CategoryId','UserId','content']
+        },
+        order:[['id','DESC']],
+        offset,
+        limit:pageSize
+      }),
+      user.countLikeCourses()
+    ])
     success(res,'查询成功',{courses,count});
   } catch (error) {
     failure(error,res)

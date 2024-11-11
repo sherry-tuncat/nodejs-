@@ -13,6 +13,11 @@
 NODE_DEV = development
 PORT = 3000
 SECRET = 你的密钥
+
+ALIYUN_ACCESS_KEY_ID = 阿里云accesskey
+ALIYUN_ACCESS_KEY_SECRET = 阿里云accesskey的密钥
+ALIYUN_BUCKET = 阿里云中oss的bucket名称
+ALIYUN_REGION = 阿里云中oss的地域
 ```
 
 其中`NODE_DEV`默认为开发环境，其中`PORT`配置为服务端口，`SECRET`配置为 jwt 加密密钥`

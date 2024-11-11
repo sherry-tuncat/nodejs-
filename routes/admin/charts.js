@@ -14,9 +14,11 @@ const { NotFoundError } = require('../../utils/errors')
  * */
 router.get('/sex',async function(req,res) {
   try {
-    const female = await User.count({where:{sex:0}})
-    const male = await User.count({where:{sex:1}})
-    const unknown = await User.count({where:{sex:9}})
+    const [female,male,unknown] = Promise.all([
+      User.count({where:{sex:0}}),
+      User.count({where:{sex:1}}),
+      User.count({where:{sex:9}})
+    ])
     const data = [
       {
         value:female,
@@ -44,7 +46,6 @@ router.get('/sex',async function(req,res) {
 router.get('/user',async function(req,res){
   try {
     const [result] = await sequelize.query("SELECT DATE_FORMAT(`createdAt`,'%Y-%m') AS `month`,COUNT(*) AS `value` FROM `Users` GROUP BY `month` ORDER BY `month` ASC")
-    console.log(result)
     const data = {
       months:[],
       values:[]

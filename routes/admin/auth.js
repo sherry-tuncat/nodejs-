@@ -33,12 +33,15 @@ router.post('/sign_in',async function(req,res) {
         ]
       }
     }
-    const user = await User.findOne(condition)
+    // 获取用户和验证密码
+    const [user,isValid] = Promise.all([
+      User.findOne(condition),
+      bcrypt.compare(password,user.password)
+    ])
     if(!user) {
       throw new NotFoundError('用户不存在')
     }
-    // 验证密码
-    const isValid = await bcrypt.compare(password,user.password)
+    
     if(!isValid) {
       throw new UnauthorizedError('密码不正确')
     }
